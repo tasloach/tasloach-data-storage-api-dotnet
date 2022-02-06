@@ -27,7 +27,7 @@ namespace DataStorage.Api.Services
 
         public bool TryGetValue(string repository, Guid key, out byte[] value)
         {
-            if (!_storage.ContainsKey(repository))
+            if (!_storage.ContainsKey(repository) || !_storage[repository].ContainsKey(key))
             {
                 value = null;
                 return false;

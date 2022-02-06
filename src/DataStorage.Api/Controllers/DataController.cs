@@ -37,7 +37,7 @@ namespace DataStorage.Api.Controllers
             }
 
             _storageService.Put(repository, id, contents);
-            
+
             result = new { oid = id, size = contents.Length };
 
             return CreatedAtAction(
@@ -51,7 +51,7 @@ namespace DataStorage.Api.Controllers
         public IActionResult DownloadObject(string repository, string objectID)
         {
             byte[] value = null;
-            var foundData = Guid.TryParse(objectID, out var id) &&_storageService.TryGetValue(repository, id, out value);
+            var foundData = Guid.TryParse(objectID, out var id) && _storageService.TryGetValue(repository, id, out value);
 
             // Get the data from somewhere
 
@@ -69,7 +69,7 @@ namespace DataStorage.Api.Controllers
         [Route("{repository}/{objectID}")]
         public IActionResult DeleteObject(string repository, string objectID)
         {
-            bool couldDeleteObject = _storageService.Delete(repository, Guid.Parse(objectID));
+            bool couldDeleteObject = Guid.TryParse(objectID, out var id) && _storageService.Delete(repository, id);
 
             if (couldDeleteObject)
             {
