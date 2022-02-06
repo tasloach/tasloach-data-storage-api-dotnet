@@ -1,35 +1,49 @@
 ﻿using DataStorage.Api.Services.Interfaces;
-using System.Collections.Concurrent;
+using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace DataStorage.Api.Services
 {
     public class SimpleStorageService : IStorageService
     {
-        private readonly IDictionary<string, object> _storage;
+        private readonly IDictionary<string, IDictionary<Guid, byte[]>> _storage;
 
         public SimpleStorageService()
         {
-            _storage = new ConcurrentDictionary<string, object>();
+            _storage = new Dictionary<string, IDictionary<Guid, byte[]>>();
         }
 
-        public async Task PutAsync<T>(string key, object data)
+        public void Put(string repository, Guid key, byte[] data)
         {
-            await Task.CompletedTask;
-            _storage[key] = data;
+            if (_storage.ContainsKey(repository))
+            {
+                _storage[repository][key] = data;
+            }
+            else
+            {
+                _storage[repository] = new Dictionary<Guid, byte[]> { { key, data } };
+            }
         }
 
-        public async Task<T> GetAsync<T>(string key)
+        public bool TryGetValue(string repository, Guid key, out byte[] value)
         {
-            await Task.CompletedTask;
-            return (T)_storage[key];
+            if (!_storage.ContainsKey(repository))
+            {
+                value = null;
+                return false;
+            }
+
+
+            value = _storage[repository][key];
+            return true;
         }
 
-        public async Task<bool> DeleteAsync<T>(string key)
+        public bool Delete(string repository, Guid key)
         {
-            await Task.CompletedTask;
-            return _storage.Remove(key);
+            if (!_storage.ContainsKey(repository) || !_storage[repository].ContainsKey(key))
+                return false;
+
+            return _storage[repository].Remove(key);
         }
     }
 }

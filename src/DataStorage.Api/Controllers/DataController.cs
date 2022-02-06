@@ -1,7 +1,7 @@
 ﻿using DataStorage.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DataStorage.Api.Controllers
@@ -24,17 +24,21 @@ namespace DataStorage.Api.Controllers
         {
             // Store the data somewhere
             await Task.CompletedTask;
+            Guid id = Guid.NewGuid();
             object result = null;
 
-            var req = HttpContext.Request;
-            var bodyStr = "";
+            var body = HttpContext.Request.Body;
+            byte[] contents;
 
-            using (var reader = new StreamReader(req.Body, Encoding.UTF8))
+            await using (var memoryStream = new MemoryStream())
             {
-                bodyStr = await reader.ReadToEndAsync();
+                await body.CopyToAsync(memoryStream);
+                contents = memoryStream.ToArray();
             }
 
-            result = new { oid = "test", size = 15151 };
+            _storageService.Put(repository, id, contents);
+            
+            result = new { oid = id, size = contents.Length };
 
             return CreatedAtAction(
                 "DownloadObject", // Works with or without Async suffix on DownloadObject method
@@ -46,13 +50,14 @@ namespace DataStorage.Api.Controllers
         [Route("{repository}/{objectID}")]
         public IActionResult DownloadObject(string repository, string objectID)
         {
-            bool foundData = false;
+            byte[] value = null;
+            var foundData = Guid.TryParse(objectID, out var id) &&_storageService.TryGetValue(repository, id, out value);
 
             // Get the data from somewhere
 
             if (foundData)
             {
-                return new FileStreamResult(fileStream: new MemoryStream(), "application/octet-stream");
+                return new FileStreamResult(fileStream: new MemoryStream(value), "application/octet-stream");
             }
             else
             {
@@ -64,7 +69,7 @@ namespace DataStorage.Api.Controllers
         [Route("{repository}/{objectID}")]
         public IActionResult DeleteObject(string repository, string objectID)
         {
-            bool couldDeleteObject = false;
+            bool couldDeleteObject = _storageService.Delete(repository, Guid.Parse(objectID));
 
             if (couldDeleteObject)
             {

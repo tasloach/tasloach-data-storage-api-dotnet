@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+﻿using System;
 
 namespace DataStorage.Api.Services.Interfaces
 {
@@ -7,28 +7,10 @@ namespace DataStorage.Api.Services.Interfaces
     /// </summary>
     public interface IStorageService
     {
-        /// <summary>
-        /// Stores the given <paramref name="data"/> using the given <paramref name="key"/>.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key">The key under which the data is being stored.</param>
-        /// <param name="data">The data that's being stored in the service.</param>
-        public Task PutAsync<T>(string key, object data);
+        public void Put(string repository, Guid key, byte[] data);
 
-        /// <summary>
-        /// A method that attempts to retrieve the data associated with the given key from the service.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
-        /// <returns>A task representing the data/object stored under the given key.</returns>
-        public Task<T> GetAsync<T>(string key);
+        public bool TryGetValue(string repository, Guid key, out byte[] value);
 
-        /// <summary>
-        /// Removes the data/object under <paramref name="key"/> in the dictionary.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
-        /// <returns>A task representing the completion of the delete.</returns>
-        public Task<bool> DeleteAsync<T>(string key);
+        public bool Delete(string repository, Guid key);
     }
 }
