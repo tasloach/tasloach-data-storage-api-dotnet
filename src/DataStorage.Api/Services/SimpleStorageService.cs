@@ -34,7 +34,6 @@ namespace DataStorage.Api.Services
                 return false;
             }
 
-
             data = _storage[repository][key];
             return true;
         }
