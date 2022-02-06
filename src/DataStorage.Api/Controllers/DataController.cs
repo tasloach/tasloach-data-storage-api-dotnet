@@ -23,9 +23,7 @@ namespace DataStorage.Api.Controllers
         public async Task<IActionResult> UploadObjectAsync(string repository)
         {
             // Store the data somewhere
-            await Task.CompletedTask;
-            Guid id = Guid.NewGuid();
-            object result = null;
+            var id = Guid.NewGuid();
 
             var body = HttpContext.Request.Body;
             byte[] contents;
@@ -38,7 +36,7 @@ namespace DataStorage.Api.Controllers
 
             _storageService.Put(repository, id, contents);
 
-            result = new { oid = id, size = contents.Length };
+            var result = new { oid = id, size = contents.Length };
 
             return CreatedAtAction(
                 "DownloadObject", // Works with or without Async suffix on DownloadObject method
@@ -47,38 +45,30 @@ namespace DataStorage.Api.Controllers
         }
 
         [HttpGet]
-        [Route("{repository}/{objectID}")]
-        public IActionResult DownloadObject(string repository, string objectID)
+        [Route("{repository}/{objectId}")]
+        public IActionResult DownloadObject(string repository, string objectId)
         {
             byte[] value = null;
-            var foundData = Guid.TryParse(objectID, out var id) && _storageService.TryGetValue(repository, id, out value);
+            var foundData = Guid.TryParse(objectId, out var id) && _storageService.TryGetValue(repository, id, out value);
 
             // Get the data from somewhere
 
             if (foundData)
-            {
                 return new FileStreamResult(fileStream: new MemoryStream(value), "application/octet-stream");
-            }
-            else
-            {
-                return NotFound();
-            }
+
+            return NotFound();
         }
 
         [HttpDelete]
-        [Route("{repository}/{objectID}")]
-        public IActionResult DeleteObject(string repository, string objectID)
+        [Route("{repository}/{objectId}")]
+        public IActionResult DeleteObject(string repository, string objectId)
         {
-            bool couldDeleteObject = Guid.TryParse(objectID, out var id) && _storageService.Delete(repository, id);
+            var couldDeleteObject = Guid.TryParse(objectId, out var id) && _storageService.Delete(repository, id);
 
             if (couldDeleteObject)
-            {
                 return Ok();
-            }
-            else
-            {
-                return NotFound();
-            }
+
+            return NotFound();
         }
     }
 }
