@@ -10,9 +10,9 @@ namespace DataStorage.Api.Services.Interfaces
         /// <summary>
         /// Stores <paramref name="data"/> under the given <paramref name="key"/> in <paramref name="repository"/>.
         /// </summary>
-        /// <param name="repository"></param>
-        /// <param name="key"></param>
-        /// <param name="data"></param>
+        /// <param name="repository">The repository in which we are trying to store <paramref name="data"/>.</param>
+        /// <param name="key">The key under which we are trying to store <paramref name="data"/>.</param>
+        /// <param name="data">The data to be stored.</param>
         public void Put(string repository, Guid key, byte[] data);
 
         /// <summary>
