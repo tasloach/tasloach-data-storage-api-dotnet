@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace DataStorage.Api.Services
 {
+    /// <inheritdoc cref="IStorageService"/>
     public class SimpleStorageService : IStorageService
     {
         private readonly IDictionary<string, IDictionary<Guid, byte[]>> _storage;
@@ -25,16 +26,16 @@ namespace DataStorage.Api.Services
             }
         }
 
-        public bool TryGetValue(string repository, Guid key, out byte[] value)
+        public bool TryGetValue(string repository, Guid key, out byte[] data)
         {
             if (!_storage.ContainsKey(repository) || !_storage[repository].ContainsKey(key))
             {
-                value = null;
+                data = null;
                 return false;
             }
 
 
-            value = _storage[repository][key];
+            data = _storage[repository][key];
             return true;
         }
 
