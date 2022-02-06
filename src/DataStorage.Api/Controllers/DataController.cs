@@ -40,7 +40,7 @@ namespace DataStorage.Api.Controllers
 
             return CreatedAtAction(
                 "DownloadObject", // Works with or without Async suffix on DownloadObject method
-                routeValues: new { repository, objectID = "some object id" },
+                routeValues: new { repository, objectID = id },
                 value: result);
         }
 
