@@ -1,3 +1,5 @@
+using DataStorage.Api.Services;
+using DataStorage.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -20,7 +22,7 @@ namespace DataStorage.Api
             services.AddControllers();
 
             // A suggestion on how to abstract away storage...
-            // services.AddSingleton<IStorage, Storage>();
+            services.AddSingleton<IStorageService, SimpleStorageService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

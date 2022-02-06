@@ -1,7 +1,8 @@
-﻿using System.IO;
-using System.Threading.Tasks;
+﻿using DataStorage.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace DataStorage.Api.Controllers
 {
@@ -9,9 +10,12 @@ namespace DataStorage.Api.Controllers
     [Route("[controller]")]
     public class DataController : ControllerBase
     {
-        public DataController()
+        private readonly IStorageService _storageService;
+
+        public DataController(IStorageService storageService)
         {
             // Consider injecting your abstracted dependencies here
+            _storageService = storageService;
         }
 
         [HttpPut]
@@ -21,6 +25,16 @@ namespace DataStorage.Api.Controllers
             // Store the data somewhere
             await Task.CompletedTask;
             object result = null;
+
+            var req = HttpContext.Request;
+            var bodyStr = "";
+
+            using (var reader = new StreamReader(req.Body, Encoding.UTF8))
+            {
+                bodyStr = await reader.ReadToEndAsync();
+            }
+
+            result = new { oid = "test", size = 15151 };
 
             return CreatedAtAction(
                 "DownloadObject", // Works with or without Async suffix on DownloadObject method
