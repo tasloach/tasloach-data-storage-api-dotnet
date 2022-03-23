@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DataStorage.Api.Controllers
@@ -46,7 +47,7 @@ namespace DataStorage.Api.Controllers
 
         [HttpGet]
         [Route("{repository}/{objectId}")]
-        public IActionResult DownloadObject(string repository, string objectId)
+        public IActionResult DownloadObject(string repository, string objectId, CancellationToken cancellationToken)
         {
             byte[] value = null;
             var foundData = Guid.TryParse(objectId, out var id) && _storageService.TryGetValue(repository, id, out value);
@@ -57,6 +58,11 @@ namespace DataStorage.Api.Controllers
                 return new FileStreamResult(fileStream: new MemoryStream(value), "application/octet-stream");
 
             return NotFound();
+        }
+
+        public IActionResult DownloadRepository(string repository)
+        {
+            return Ok(_storageService.GetRepository(repository));
         }
 
         [HttpDelete]

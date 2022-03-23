@@ -1,6 +1,8 @@
 ﻿using DataStorage.Api.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DataStorage.Api.Services
 {
@@ -44,6 +46,14 @@ namespace DataStorage.Api.Services
                 return false;
 
             return _storage[repository].Remove(key);
+        }
+
+        public IEnumerable<byte[]> GetRepository(string repository)
+        {
+            if (!_storage.ContainsKey(repository))
+                return Enumerable.Empty<byte[]>();
+
+            return _storage[repository].Select(x => x.Value);
         }
     }
 }

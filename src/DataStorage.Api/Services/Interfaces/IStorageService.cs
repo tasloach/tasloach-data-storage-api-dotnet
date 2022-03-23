@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DataStorage.Api.Services.Interfaces
 {
@@ -31,5 +33,7 @@ namespace DataStorage.Api.Services.Interfaces
         /// <param name="key">The key of the object/data that we are attempting to retrieve.</param>
         /// <returns><c>true</c> if data was successfully removed from storage, else false if the repository and key combination is invalid.</returns>
         public bool Delete(string repository, Guid key);
+
+        public IEnumerable<byte[]> GetRepository(string repository);
     }
 }
